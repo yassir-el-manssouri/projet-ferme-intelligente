@@ -1,0 +1,14 @@
+=== RAPPORT D'ACTIVITE FERME ===
+Genere le : Sat Dec 27 02:25:49 2025
+
+1. ETAT IRRIGATION
+   Niveau actuel : 50 Litres
+   Capacite max  : 1000 Litres
+
+2. ETAT CLIMATIQUE
+   Temperature : 22 C
+   Humidite    : 60 %
+
+3. STOCK ALIMENTATION
+   Stock restant : 500 kg
+   Jours d'activite : 29

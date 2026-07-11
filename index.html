@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferme Intelligente Avancee</title>
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --secondary: #3498db;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #27ae60;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .header-left h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .header-left .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #d4edda;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #155724;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* NAVIGATION TABS */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            color: white;
+        }
+
+        /* SECTIONS */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* DASHBOARD GRID */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* CARDS */
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+
+        .card-header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .card-icon {
+            font-size: 3em;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 1.6em;
+            color: var(--dark);
+            font-weight: bold;
+        }
+
+        .card-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* STATS */
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .stat:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .stat-value {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* PROGRESS BARS */
+        .progress-container {
+            margin: 15px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: #7f8c8d;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #ecf0f1;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.95em;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* INPUTS */
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+
+        /* BUTTONS */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ANIMALS GRID */
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .animal-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .animal-card:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .animal-icon {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .animal-name {
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 5px;
+            font-size: 1.2em;
+        }
+
+        .animal-info {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin: 3px 0;
+        }
+
+        .animal-status {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        /* FEED CONTROLS */
+        .feed-controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        .feed-input {
+            width: 60px !important;
+            padding: 5px !important;
+            font-size: 0.8em;
+        }
+        .btn-feed {
+            padding: 5px 10px;
+            font-size: 0.8em;
+            background: var(--warning);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            min-width: auto;
+        }
+
+        /* ALERTS */
+        #alerts {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .alert {
+            padding: 18px 24px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: slideIn 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 5px solid #17a2b8;
+        }
+
+        /* HISTORY TABLE */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .history-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .history-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* FOOTER */
+        footer {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .tabs {
+                justify-content: center;
+            }
+
+            #alerts {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>🌾 Ferme Intelligente Avancee</h1>
+                <p class="subtitle">Systeme de Gestion Complete et Automatisee</p>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Systeme Actif</span>
+                </div>
+                <button class="btn-primary" onclick="syncWithBackend()">🔄 Synchroniser</button>
+            </div>
+        </header>
+
+        <div id="alerts"></div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showSection('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="showSection('irrigation')">💧 Irrigation</button>
+            <button class="tab" onclick="showSection('climat')">🌡️ Climat</button>
+            <button class="tab" onclick="showSection('animaux')">🐄 Animaux</button>
+            <button class="tab" onclick="showSection('alimentation')">🌾 Alimentation</button>
+            <button class="tab" onclick="showSection('historique')">📜 Historique</button>
+            <button class="tab" onclick="showSection('rapports')">📄 Rapports</button>
+        </div>
+
+        <div id="dashboard" class="section active">
+            <div class="dashboard">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                            <span class="card-icon">💧</span>
+                            <h2 class="card-title">Irrigation</h2>
+                        </div>
+                        <span class="card-badge badge-success">OK</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Niveau Actuel</span>
+                        <span class="stat-value" id="dash-water">1000 L</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="dash-water-progress" style="width: 100%">100%</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                            <span class="card-icon">🌡️</span>
+                            <h2 class="card-title">Climat</h2>
+                        </div>
+                        <span class="card-badge badge-success">Optimal</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Temperature</span>
+                        <span class="stat-value" id="dash-temp">20°C</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Humidite</span>
+                        <span class="stat-value" id="dash-hum">55%</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                            <span class="card-icon">🌾</span>
+                            <h2 class="card-title">Alimentation</h2>
+                        </div>
+                        <span class="card-badge badge-success">Stock OK</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Stock</span>
+                        <span class="stat-value" id="dash-food">500 kg</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Autonomie</span>
+                        <span class="stat-value" id="dash-autonomy">10 jours</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                            <span class="card-icon">🐄</span>
+                            <h2 class="card-title">Animaux</h2>
+                        </div>
+                        <span class="card-badge badge-success">75% Sante</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Total</span>
+                        <span class="stat-value">4</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">En Bonne Sante</span>
+                        <span class="stat-value">3/4</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <span class="card-icon">📊</span>
+                        <h2 class="card-title">Statistiques Globales</h2>
+                    </div>
+                </div>
+                <div class="dashboard">
+                    <div class="stat">
+                        <span class="stat-label">💧 Eau Disponible</span>
+                        <span class="stat-value" id="stats-water">1000 L</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">🌾 Jours Exploitation</span>
+                        <span class="stat-value" id="stats-days">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">📦 Nourriture Consommee</span>
+                        <span class="stat-value" id="stats-consumed">0 kg</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">💰 Cout Total</span>
+                        <span class="stat-value" id="stats-cost">0 MAD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="irrigation" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <span class="card-icon">💧</span>
+                        <h2 class="card-title">Systeme d'Irrigation</h2>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Niveau du Reservoir</span>
+                        <span id="water-level">1000 L / 1000 L</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="water-progress" style="width: 100%">100%</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Quantite a arroser (litres)</label>
+                    <input type="number" id="water-amount" placeholder="Ex: 100" min="0">
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="arroser()">💦 Arroser</button>
+                    <button class="btn-success" onclick="remplirReservoir()">🔄 Remplir Reservoir</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="climat" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <span class="card-icon">🌡️</span>
+                        <h2 class="card-title">Gestion du Climat</h2>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <span class="stat-label">Temperature Actuelle</span>
+                    <span class="stat-value" id="temp-actual">20°C</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Temperature Cible (°C)</label>
+                    <input type="number" id="temp-target" value="22" min="-10" max="50">
+                </div>
+
+                <div class="stat">
+                    <span class="stat-label">Humidite Actuelle</span>
+                    <span class="stat-value" id="hum-actual">55%</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Humidite Cible (%)</label>
+                    <input type="number" id="hum-target" value="60" min="0" max="100">
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="ajusterClimat()">⚙️ Ajuster Climat</button>
+                    <button class="btn-warning" onclick="resetClimat()">🔄 Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="animaux" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <span class="card-icon">🐄</span>
+                        <h2 class="card-title">Surveillance des Animaux</h2>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <span class="stat-label">Total Animaux</span>
+                    <span class="stat-value">4</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">En Bonne Sante</span>
+                    <span class="stat-value">3/4</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Taux de Sante</span>
+                    <span class="stat-value">75%</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Poids Moyen</span>
+                    <span class="stat-value">138.125 kg</span>
+                </div>
+
+                <div class="animals-grid">
+                    </div>
+            </div>
+        </div>
+
+        <div id="alimentation" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <span class="card-icon">🌾</span>
+                        <h2 class="card-title">Systeme d'Alimentation</h2>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Stock de Nourriture</span>
+                        <span id="food-stock-label">500 kg</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="food-progress" style="width: 100%">100%</div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <span class="stat-label">Consommation Quotidienne</span>
+                    <span class="stat-value">50 kg/jour</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Autonomie</span>
+                    <span class="stat-value" id="food-autonomy">10 jours</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Jours Ecoules</span>
+                    <span class="stat-value" id="food-days">0</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Quantite a ajouter (kg)</label>
+                    <input type="number" id="food-amount" placeholder="Ex: 100" min="0">
+                </div>
+
+                <div class="controls">
+                    <button class="btn-warning" onclick="distribuerNourriture()">📦 Distribuer (50kg)</button>
+                    <button class="btn-success" onclick="reapprovisionner()">➕ Reapprovisionner</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="historique" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <span class="card-icon">📜</span>
+                        <h2 class="card-title">Historique des Operations</h2>
+                    </div>
+                    <button class="btn-danger" onclick="clearHistory()">🗑️ Effacer</button>
+                </div>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date/Heure</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody">
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #7f8c8d;">Aucune operation enregistree</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="rapports" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <span class="card-icon">📄</span>
+                        <h2 class="card-title">Generation de Rapports</h2>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Type de Rapport</label>
+                    <select id="rapport-type">
+                        <option value="complet">Rapport Complet</option>
+                        <option value="irrigation">Irrigation Seulement</option>
+                        <option value="climat">Climat Seulement</option>
+                        <option value="animaux">Animaux Seulement</option>
+                        <option value="alimentation">Alimentation Seulement</option>
+                    </select>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="genererRapport()">📄 Generer Rapport TXT</button>
+                </div>
+
+                <div id="rapport-preview" style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px; display: none;">
+                    <h3 style="margin-bottom: 15px;">Apercu du Rapport</h3>
+                    <pre id="rapport-content" style="white-space: pre-wrap; font-family: monospace;"></pre>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>Ferme Intelligente Avancee</strong></p>
+            <p>Systeme de Gestion Complete avec Backend C++</p>
+            <p style="color: #bdc3c7; margin-top: 10px; font-size: 0.9em;">Developpe pour une agriculture moderne et durable</p>
+        </footer>
+    </div>
+
+    <script>
+
+        // DONNEES GLOBALES
+        
+        const BACKEND_URL = 'http://localhost:8080/api';
+        
+        let fermeData = {
+            irrigation: {
+                capaciteMax: 1000,
+                niveauActuel: 1000
+            },
+            serre: {
+                temperatureActuelle: 20,
+                temperatureCible: 22,
+                humiditeActuelle: 55,
+                humiditeCible: 60
+            },
+            alimentation: {
+                stock: 500,
+                consommationQuotidienne: 50,
+                joursEcoules: 0
+            },
+            historique: []
+        };
+
+        // GESTION DES ONGLETS
+        
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // SYSTEME D'ALERTES
+        
+        function showAlert(message, type = 'success', icon = '✓') {
+            const alertDiv = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `<span style="font-size: 1.5em;">${icon}</span><span>${message}</span>`;
+            alertDiv.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.animation = 'slideIn 0.4s ease reverse';
+                setTimeout(() => alert.remove(), 400);
+            }, 4000);
+        }
+
+        // HISTORIQUE
+        
+        function addToHistory(action, details, status = 'success') {
+            const now = new Date();
+            const dateStr = now.toLocaleString('fr-FR');
+            
+            fermeData.historique.unshift({
+                date: dateStr,
+                action: action,
+                details: details,
+                status: status
+            });
+            
+            updateHistoryTable();
+        }
+
+        function updateHistoryTable() {
+            const tbody = document.getElementById('history-tbody');
+            
+            if (fermeData.historique.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #7f8c8d;">Aucune operation enregistree</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            fermeData.historique.slice(0, 50).forEach(entry => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td><strong>${entry.action}</strong></td>
+                    <td>${entry.details}</td>
+                    <td><span class="card-badge badge-${entry.status}">${entry.status === 'success' ? '✓' : '✗'}</span></td>
+                `;
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('Voulez-vous vraiment effacer tout l\'historique ?')) {
+                fermeData.historique = [];
+                updateHistoryTable();
+                showAlert('Historique efface', 'info', 'ℹ️');
+            }
+        }
+
+        // GESTION ANIMAUX 
+       
+        function renderAnimals(listeAnimaux) {
+            const container = document.querySelector('.animals-grid');
+            container.innerHTML = ''; 
+
+            listeAnimaux.forEach(animal => {
+                let badgeColor = 'success';
+                let statusText = 'En forme';
+                if(animal.sante < 50) { badgeColor = 'warning'; statusText = 'Faible'; }
+                if(animal.sante < 20) { badgeColor = 'danger'; statusText = 'Critique'; }
+
+                const html = `
+                <div class="animal-card">
+                    <span class="animal-icon">🐾</span>
+                    <div class="animal-name">${animal.nom}</div>
+                    <div class="animal-info">${animal.espece}</div>
+                    
+                    <div class="progress-bar" style="height: 10px; margin: 10px 0;">
+                        <div class="progress-fill" style="width: ${animal.sante}%; background: ${animal.sante < 30 ? '#e74c3c' : '#2ecc71'}"></div>
+                    </div>
+                    <span class="animal-status badge-${badgeColor}">${Math.round(animal.sante)}% - ${statusText}</span>
+
+                    <div class="feed-controls">
+                        <input type="number" id="feed-${animal.nom}" class="feed-input" placeholder="kg">
+                        <button class="btn-feed" onclick="feedSpecificAnimal('${animal.nom}')">🍖</button>
+                    </div>
+                </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        async function feedSpecificAnimal(nom) {
+            const input = document.getElementById(`feed-${nom}`);
+            const qty = parseFloat(input.value);
+            
+            if(!qty || qty <= 0) {
+                showAlert("Quantité invalide", 'danger', '⚠');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/nourrir_animal`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ nom: nom, quantite: qty })
+                });
+                const res = await response.json();
+                
+                if(res.success) {
+                    showAlert(`${nom} a mangé ${qty}kg !`, 'success');
+                    addToHistory('Nourrissage', `${nom} +${qty}kg`, 'success');
+                    input.value = '';
+                    syncWithBackend(); 
+                } else {
+                    showAlert("Erreur: " + res.message, 'danger', '✗');
+                }
+            } catch(e) {
+                console.error(e);
+                showAlert("Erreur de connexion", 'danger', '⚠');
+            }
+        }
+
+        // IRRIGATION
+       
+        function arroser() {
+            const amount = parseFloat(document.getElementById('water-amount').value);
+            
+            if (!amount || amount <= 0) {
+                showAlert('Veuillez entrer une quantite valide', 'danger', '✗');
+                return;
+            }
+
+            if (amount <= fermeData.irrigation.niveauActuel) {
+                fermeData.irrigation.niveauActuel -= amount;
+                updateWaterDisplay();
+                showAlert(`Arrosage effectue : ${amount} litres`, 'success', '💦');
+                addToHistory('Arrosage', `${amount} litres utilises`, 'success');
+                document.getElementById('water-amount').value = '';
+                
+                callBackendAPI('arroser', {quantite: amount});
+            } else {
+                showAlert('Eau insuffisante dans le reservoir !', 'danger', '✗');
+                addToHistory('Arrosage', `Echec: eau insuffisante (demande: ${amount}L)`, 'danger');
+            }
+        }
+
+        function remplirReservoir() {
+            const ajout = fermeData.irrigation.capaciteMax - fermeData.irrigation.niveauActuel;
+            fermeData.irrigation.niveauActuel = fermeData.irrigation.capaciteMax;
+            updateWaterDisplay();
+            showAlert(`Reservoir rempli : +${ajout.toFixed(2)} litres`, 'success', '🔄');
+            addToHistory('Remplissage', `${ajout.toFixed(2)} litres ajoutes`, 'success');
+            
+            callBackendAPI('remplir', {});
+        }
+
+        function updateWaterDisplay() {
+            const niveau = fermeData.irrigation.niveauActuel;
+            const capacite = fermeData.irrigation.capaciteMax;
+            const percentage = (niveau / capacite) * 100;
+            
+            document.getElementById('water-level').textContent = `${niveau.toFixed(2)} L / ${capacite} L`;
+            document.getElementById('water-progress').style.width = `${percentage}%`;
+            document.getElementById('water-progress').textContent = `${percentage.toFixed(0)}%`;
+            
+            document.getElementById('dash-water').textContent = `${niveau.toFixed(2)} L`;
+            document.getElementById('dash-water-progress').style.width = `${percentage}%`;
+            document.getElementById('dash-water-progress').textContent = `${percentage.toFixed(0)}%`;
+            document.getElementById('stats-water').textContent = `${niveau.toFixed(2)} L`;
+        }
+
+        // CLIMAT
+        
+        function ajusterClimat() {
+            const tempTarget = parseFloat(document.getElementById('temp-target').value);
+            const humTarget = parseFloat(document.getElementById('hum-target').value);
+
+            if (!tempTarget || !humTarget) {
+                showAlert('Veuillez entrer des valeurs valides', 'danger', '✗');
+                return;
+            }
+
+            if (tempTarget < -10 || tempTarget > 50) {
+                showAlert('Temperature doit etre entre -10°C et 50°C', 'danger', '✗');
+                return;
+            }
+
+            if (humTarget < 0 || humTarget > 100) {
+                showAlert('Humidite doit etre entre 0% et 100%', 'danger', '✗');
+                return;
+            }
+
+            fermeData.serre.temperatureCible = tempTarget;
+            fermeData.serre.humiditeCible = humTarget;
+            fermeData.serre.temperatureActuelle = tempTarget;
+            fermeData.serre.humiditeActuelle = humTarget;
+
+            document.getElementById('temp-actual').textContent = `${tempTarget}°C`;
+            document.getElementById('hum-actual').textContent = `${humTarget}%`;
+            document.getElementById('dash-temp').textContent = `${tempTarget}°C`;
+            document.getElementById('dash-hum').textContent = `${humTarget}%`;
+            
+            showAlert('Climat ajuste avec succes', 'success', '⚙️');
+            addToHistory('Ajustement Climat', `Temp: ${tempTarget}°C, Hum: ${humTarget}%`, 'success');
+            
+            callBackendAPI('climat', {temperature: tempTarget, humidite: humTarget});
+        }
+
+        function resetClimat() {
+            document.getElementById('temp-target').value = 22;
+            document.getElementById('hum-target').value = 60;
+            ajusterClimat();
+        }
+
+        // ALIMENTATION
+       
+        function distribuerNourriture() {
+            const conso = fermeData.alimentation.consommationQuotidienne;
+            
+            if (fermeData.alimentation.stock >= conso) {
+                fermeData.alimentation.stock -= conso;
+                fermeData.alimentation.joursEcoules++;
+                updateFoodDisplay();
+                showAlert(`Distribution effectuee : ${conso} kg`, 'success', '📦');
+                addToHistory('Distribution', `${conso} kg distribues (Jour ${fermeData.alimentation.joursEcoules})`, 'success');
+                
+                callBackendAPI('distribuer', {});
+            } else {
+                showAlert('Stock insuffisant ! Reapprovisionnez', 'danger', '✗');
+                addToHistory('Distribution', 'Echec: stock insuffisant', 'danger');
+            }
+        }
+
+        function reapprovisionner() {
+            const amount = parseFloat(document.getElementById('food-amount').value);
+            
+            if (!amount || amount <= 0) {
+                showAlert('Veuillez entrer une quantite valide', 'danger', '✗');
+                return;
+            }
+
+            fermeData.alimentation.stock += amount;
+            updateFoodDisplay();
+            showAlert(`Stock reapprovisionne : +${amount} kg`, 'success', '➕');
+            addToHistory('Reapprovisionnement', `${amount} kg ajoutes au stock`, 'success');
+            document.getElementById('food-amount').value = '';
+            
+            callBackendAPI('reapprovisionner', {quantite: amount});
+        }
+
+        function updateFoodDisplay() {
+            const stock = fermeData.alimentation.stock;
+            const conso = fermeData.alimentation.consommationQuotidienne;
+            const autonomie = Math.floor(stock / conso);
+            const percentage = Math.min((stock / 500) * 100, 100);
+
+            document.getElementById('food-stock-label').textContent = `${stock.toFixed(2)} kg`;
+            document.getElementById('food-autonomy').textContent = `${autonomie} jours`;
+            document.getElementById('food-days').textContent = fermeData.alimentation.joursEcoules;
+            document.getElementById('food-progress').style.width = `${percentage}%`;
+            document.getElementById('food-progress').textContent = `${percentage.toFixed(0)}%`;
+            
+            document.getElementById('dash-food').textContent = `${stock.toFixed(2)} kg`;
+            document.getElementById('dash-autonomy').textContent = `${autonomie} jours`;
+
+            const consumed = fermeData.alimentation.joursEcoules * conso;
+            const cost = consumed * 3;
+
+            document.getElementById('stats-days').textContent = fermeData.alimentation.joursEcoules;
+            document.getElementById('stats-consumed').textContent = `${consumed.toFixed(2)} kg`;
+            document.getElementById('stats-cost').textContent = `${cost.toFixed(2)} MAD`;
+
+            if (autonomie < 3) {
+                showAlert('ALERTE : Stock faible ! Reapprovisionnement necessaire', 'warning', '⚠️');
+            }
+        }
+
+        // RAPPORTS
+        
+        function genererRapport() {
+            const type = document.getElementById('rapport-type').value;
+            let rapport = '';
+            
+            rapport += '========================================\n';
+            rapport += '   RAPPORT FERME INTELLIGENTE\n';
+            rapport += '========================================\n\n';
+            rapport += `Date: ${new Date().toLocaleString('fr-FR')}\n`;
+            rapport += `Type: ${type}\n\n`;
+            
+            if (type === 'complet' || type === 'irrigation') {
+                rapport += '--- SYSTEME D\'IRRIGATION ---\n';
+                rapport += `Capacite maximale: ${fermeData.irrigation.capaciteMax} litres\n`;
+                rapport += `Niveau actuel: ${fermeData.irrigation.niveauActuel.toFixed(2)} litres\n`;
+                rapport += `Taux: ${((fermeData.irrigation.niveauActuel / fermeData.irrigation.capaciteMax) * 100).toFixed(2)}%\n\n`;
+            }
+            
+            if (type === 'complet' || type === 'climat') {
+                rapport += '--- CLIMAT DE LA SERRE ---\n';
+                rapport += `Temperature: ${fermeData.serre.temperatureActuelle}°C\n`;
+                rapport += `Humidite: ${fermeData.serre.humiditeActuelle}%\n\n`;
+            }
+            
+            if (type === 'complet' || type === 'animaux') {
+                rapport += '--- SURVEILLANCE DES ANIMAUX ---\n';
+                rapport += 'Consulter le rapport serveur pour les details precis des animaux.\n\n';
+            }
+            
+            if (type === 'complet' || type === 'alimentation') {
+                rapport += '--- SYSTEME D\'ALIMENTATION ---\n';
+                rapport += `Stock actuel: ${fermeData.alimentation.stock.toFixed(2)} kg\n`;
+                rapport += `Consommation quotidienne: ${fermeData.alimentation.consommationQuotidienne} kg\n`;
+                rapport += `Autonomie: ${Math.floor(fermeData.alimentation.stock / fermeData.alimentation.consommationQuotidienne)} jours\n`;
+                rapport += `Jours ecoules: ${fermeData.alimentation.joursEcoules}\n\n`;
+            }
+            
+            rapport += '========================================\n';
+            
+            document.getElementById('rapport-preview').style.display = 'block';
+            document.getElementById('rapport-content').textContent = rapport;
+            
+            showAlert('Rapport genere avec succes', 'success', '📄');
+            addToHistory('Generation Rapport', `Type: ${type}`, 'success');
+            
+            callBackendAPI('rapport', {type: type});
+        }
+
+        // COMMUNICATION BACKEND
+        
+        async function callBackendAPI(endpoint, data) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Backend response:', result);
+                }
+            } catch (error) {
+                console.log('Backend non disponible (mode autonome)');
+            }
+        }
+
+        async function syncWithBackend() {
+            showAlert('Synchronisation avec le backend...', 'info', 'ℹ️');
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/stats`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    fermeData.irrigation.niveauActuel = data.eauNiveau;
+                    fermeData.serre.temperatureActuelle = data.temperature;
+                    fermeData.serre.humiditeActuelle = data.humidite;
+                    fermeData.alimentation.stock = data.stockNourriture;
+                    fermeData.alimentation.joursEcoules = data.joursEcoules;
+                    
+                    updateWaterDisplay();
+                    updateFoodDisplay();
+
+                    if(data.animaux) {
+                        renderAnimals(data.animaux);
+                    }
+                    
+                    showAlert('Synchronisation reussie', 'success', '✓');
+                }
+            } catch (error) {
+                showAlert('Backend non disponible', 'warning', '⚠️');
+            }
+        }
+
+        // INITIALISATION
+        
+        window.onload = function() {
+            updateWaterDisplay();
+            updateFoodDisplay();
+            updateHistoryTable();
+            showAlert('Systeme initialise avec succes', 'success', '✓');
+            addToHistory('Demarrage', 'Systeme initialise', 'success');
+        };
+    </script>
+</body>
+</html>
